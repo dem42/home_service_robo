@@ -437,10 +437,10 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>144 757000000</sim_time>
-      <real_time>145 20550336</real_time>
-      <wall_time>1527964012 769588570</wall_time>
-      <iterations>144757</iterations>
+      <sim_time>187 758000000</sim_time>
+      <real_time>43 70778251</real_time>
+      <wall_time>1527966212 817659850</wall_time>
+      <iterations>43001</iterations>
       <model name='ground_plane'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -452,52 +452,52 @@
         </link>
       </model>
       <model name='ushape'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose frame=''>0.063729 3.17215 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='Wall_2'>
-          <pose frame=''>-4.82056 0.000686 0 0 0 -1.59194</pose>
+          <pose frame=''>-4.75683 3.17283 0 0 0 -1.59194</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_3'>
-          <pose frame=''>0.000437 -4.92431 0 0 0 -0.000224</pose>
+          <pose frame=''>0.064166 -1.75216 0 0 0 -0.000224</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_4'>
-          <pose frame=''>4.87958 -0.000416 0 0 -0 1.58014</pose>
+          <pose frame=''>4.94331 3.17173 0 0 -0 1.58014</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_5'>
-          <pose frame=''>3.65858 4.92458 0 0 -0 3.14159</pose>
+          <pose frame=''>3.72231 8.09673 0 0 -0 3.14159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_6'>
-          <pose frame=''>2.48358 1.37458 0 0 0 -1.5708</pose>
+          <pose frame=''>2.54731 4.54673 0 0 0 -1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_7'>
-          <pose frame=''>0.05858 -2.17542 0 0 -0 3.14159</pose>
+          <pose frame=''>0.122309 0.996727 0 0 -0 3.14159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_8'>
-          <pose frame=''>-2.36642 1.37458 0 0 -0 1.5708</pose>
+          <pose frame=''>-2.30269 4.54673 0 0 -0 1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_9'>
-          <pose frame=''>-3.54142 4.92458 0 0 -0 3.14159</pose>
+          <pose frame=''>-3.47769 8.09673 0 0 -0 3.14159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
