@@ -1,7 +1,47 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+#include <nav_msgs/Odometry.h>
 
-void sendMarkerAt(double x, double y, ros::Publisher& marker_pub, bool hide) {
+#include <cmath>
+
+const double THRESHOLD_POS = 1;
+const double THRESHOLD_ORIENT = 1;
+
+enum STAGE {
+  PICKING_UP, DROPPING_OFF, DONE
+};
+
+// variables
+ros::Publisher marker_pub;
+STAGE current_stage;
+geometry_msgs::Pose target;
+geometry_msgs::Pose pickup_target;
+geometry_msgs::Pose dropoff_target;
+
+double euclidDistance(const geometry_msgs::Point& p1, const geometry_msgs::Point& p2) {
+  double dx = p1.x - p2.x;
+  double dy = p1.y - p2.y;
+  double dz = p1.z - p2.z;
+  return sqrt(dx*dx + dy*dy + dz*dz);
+}
+
+double quaternionInnerProduct(const geometry_msgs::Quaternion& q1, const geometry_msgs::Quaternion& q2) {
+  return q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+}
+
+double quaternionDistance(const geometry_msgs::Quaternion& q1, const geometry_msgs::Quaternion& q2) {
+  double qInner = quaternionInnerProduct(q1, q2);
+  return 1.0 - qInner;
+}
+
+bool closeEnough(const geometry_msgs::Pose& p1, const geometry_msgs::Pose& p2) {
+  double ed = euclidDistance(p1.position, p2.position);
+  double qd = quaternionDistance(p1.orientation, p2.orientation);
+  ROS_INFO("[ADD_MARKERS] Is close enough? pose dist: %f, orient dist: %f.", ed, qd);
+  return ed < THRESHOLD_POS && qd < THRESHOLD_ORIENT;
+}
+
+void sendMarkerAt(ros::Publisher& marker_pub, bool hide, geometry_msgs::Pose& targetPose) {
     visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
     marker.header.frame_id = "map";
@@ -18,14 +58,8 @@ void sendMarkerAt(double x, double y, ros::Publisher& marker_pub, bool hide) {
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = hide ? visualization_msgs::Marker::DELETE : visualization_msgs::Marker::ADD;
 
-    // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    marker.pose.position.x = x;
-    marker.pose.position.y = y;
-    marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
+    // set pose
+    marker.pose = targetPose;
 
     // Set the scale of the marker -- 1x1x1 here means 1m on a side
     marker.scale.x = 0.2;
@@ -47,28 +81,54 @@ void sendMarkerAt(double x, double y, ros::Publisher& marker_pub, bool hide) {
       {
         return;
       }
-      ROS_WARN_ONCE("Please create a subscriber to the marker");
+      ROS_WARN_ONCE("[ADD_MARKER] Please create a subscriber to the marker");
       sleep(1);
     }
     marker_pub.publish(marker);
 }
 
+void odom_callback(const nav_msgs::Odometry::ConstPtr& odom_msg) {
+  geometry_msgs::Pose robotPose = odom_msg->pose.pose;
+
+  if (closeEnough(robotPose, target)) {
+    if (current_stage == PICKING_UP) {
+      ROS_INFO("[ADD_MARKERS] Reached pickup. Hiding marker");
+      sendMarkerAt(marker_pub, true, pickup_target);
+      current_stage = DROPPING_OFF;
+      target = dropoff_target;
+    }
+    else if (current_stage == DROPPING_OFF) {
+      ROS_INFO("[ADD_MARKERS] Reached dropoff.");
+      sendMarkerAt(marker_pub, false, dropoff_target);
+      current_stage = DONE;
+    }
+  }
+}
+
+void initTarget(geometry_msgs::Pose& target, double x, double y) {
+  target.position.x = x;
+  target.position.y = y;
+  target.position.z = 0.0;
+  target.orientation.w = 1.0;
+}
+
+ros::Subscriber odom_subscriber;
 int main( int argc, char** argv )
 {
+  current_stage = PICKING_UP;
+  initTarget(pickup_target, 3.5, 4.0);
+  initTarget(dropoff_target, 3.5, 0.0);
+  target = pickup_target;
+  
   ros::init(argc, argv, "add_markers");
   ros::NodeHandle n;
-  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+  marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+  odom_subscriber = n.subscribe("/odom", 1000, odom_callback);
 
-  sendMarkerAt(3.2, 4.0, marker_pub, false);
+  sendMarkerAt(marker_pub, false, pickup_target);
+  ROS_INFO("[ADD_MARKERS] Markers initialized at pickup zone");
 
-  sleep(5);
-
-  sendMarkerAt(3.2, 4.0, marker_pub, true);
-  
-  sleep(5);
-
-  sendMarkerAt(3.2, 2.0, marker_pub, false);
-
+  // wait for ROS to be shut down
   while (ros::ok()) {
     sleep(1);
   }

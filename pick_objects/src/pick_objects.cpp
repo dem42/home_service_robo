@@ -41,17 +41,17 @@ int main(int argc, char** argv){
     ROS_INFO("[ROBOT] Reached pickup goal");
   else
     ROS_INFO("[ROBOT] Failed to reach pickup goal");
-
+  
   ac.stopTrackingGoal();
   
   // sleep for 5s
-  usleep(5000000);
+  sleep(5);
   // Drop off
   move_base_msgs::MoveBaseGoal dropoff_goal;
   
   dropoff_goal.target_pose.header.frame_id = "map";
   dropoff_goal.target_pose.header.stamp = ros::Time::now();
-  dropoff_goal.target_pose.pose.position.x = 3.2;
+  dropoff_goal.target_pose.pose.position.x = 3.5;
   dropoff_goal.target_pose.pose.position.y = 0.0;
   dropoff_goal.target_pose.pose.orientation.w = 1.0;
   ROS_INFO("Sending dropoff goal");
@@ -64,7 +64,10 @@ int main(int argc, char** argv){
   else
     ROS_INFO("[ROBOT] Failed to reach dropoff goal");
 
-  usleep(20000000);
+  // wait for ROS to be shut down
+  while (ros::ok()) {
+    sleep(1);
+  }
   
   return 0;
 }
