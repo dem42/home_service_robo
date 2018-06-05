@@ -51,7 +51,7 @@ int main(int argc, char** argv){
   
   dropoff_goal.target_pose.header.frame_id = "map";
   dropoff_goal.target_pose.header.stamp = ros::Time::now();
-  dropoff_goal.target_pose.pose.position.x = 3.5;
+  dropoff_goal.target_pose.pose.position.x = -3.5;
   dropoff_goal.target_pose.pose.position.y = 0.0;
   dropoff_goal.target_pose.pose.orientation.w = 1.0;
   ROS_INFO("Sending dropoff goal");
